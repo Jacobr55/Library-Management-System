@@ -1,0 +1,33 @@
+﻿@model List<LibraryManagementSystem.Models.Checkout>
+@{
+    ViewData["Title"] = "Checkouts";
+}
+
+<h2>Checkouts</h2>
+<a asp-controller="Checkouts" asp-action="Create" class="btn btn-primary mb-3">+ New Checkout</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Book</th>
+            <th>Member</th>
+            <th>Checked Out</th>
+            <th>Due Date</th>
+            <th>Returned</th>
+            <th>Condition</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr class="@(c.ReturnDate == null ? "table-warning" : "")">
+                <td>@c.BookTitleName</td>
+                <td>@c.MemberName</td>
+                <td>@c.CheckoutDate</td>
+                <td>@c.DueDate</td>
+                <td>@(c.ReturnDate?.ToString() ?? "— Not returned")</td>
+                <td>@c.ConditionName</td>
+            </tr>
+        }
+    </tbody>
+</table>

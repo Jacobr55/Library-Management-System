@@ -1,0 +1,25 @@
+﻿@model List<LibraryManagementSystem.Models.Member>
+@{
+    ViewData["Title"] = "Members";
+}
+
+<h2>Members</h2>
+<a asp-controller="Members" asp-action="Create" class="btn btn-primary mb-3">+ Add Member</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.FullName</td>
+                <td>@m.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
