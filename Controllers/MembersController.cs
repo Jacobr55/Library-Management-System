@@ -19,8 +19,8 @@ namespace LibraryManagementSystem.Controllers
             conn.Open();
 
             string sql = @"
-            SELECT MemberID, FirstName, LastName, Email 
-            FROM   Members 
+            SELECT MemberID, FirstName, LastName, Email
+            FROM   Members
             ORDER  BY LastName";
 
             using var cmd = new SqlCommand(sql, conn);
@@ -38,6 +38,60 @@ namespace LibraryManagementSystem.Controllers
             }
 
             return View(members);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            Member? member = null;
+
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+            SELECT MemberID, FirstName, LastName, Email
+            FROM   Members
+            WHERE  MemberID = @id";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@id", id);
+
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                member = new Member
+                {
+                    MemberID = (int)reader["MemberID"],
+                    FirstName = reader["FirstName"].ToString()!,
+                    LastName = reader["LastName"].ToString()!,
+                    Email = reader["Email"].ToString()!
+                };
+            }
+
+            if (member == null) return NotFound();
+            return View(member);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Member m)
+        {
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+            UPDATE Members
+            SET    FirstName = @first,
+                   LastName  = @last,
+                   Email     = @email
+            WHERE  MemberID  = @id";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@first", m.FirstName);
+            cmd.Parameters.AddWithValue("@last", m.LastName);
+            cmd.Parameters.AddWithValue("@email", m.Email);
+            cmd.Parameters.AddWithValue("@id", m.MemberID);
+            cmd.ExecuteNonQuery();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

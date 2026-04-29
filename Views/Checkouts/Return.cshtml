@@ -1,0 +1,43 @@
+@model LibraryManagementSystem.Models.Checkout
+@{
+    ViewData["Title"] = "Return Book";
+    var conditions = ViewBag.Conditions as List<LibraryManagementSystem.Models.Condition> ?? new();
+    var defaultReturn = (Model.ReturnDate ?? DateOnly.FromDateTime(DateTime.Today)).ToString("yyyy-MM-dd");
+}
+
+<h2>Return Book</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Book</dt>
+    <dd class="col-sm-9">@Model.BookTitleName</dd>
+
+    <dt class="col-sm-3">Member</dt>
+    <dd class="col-sm-9">@Model.MemberName</dd>
+
+    <dt class="col-sm-3">Checked Out</dt>
+    <dd class="col-sm-9">@Model.CheckoutDate</dd>
+
+    <dt class="col-sm-3">Due</dt>
+    <dd class="col-sm-9">@Model.DueDate</dd>
+</dl>
+
+<form asp-action="Return" method="post">
+    <input type="hidden" asp-for="CheckoutID" />
+
+    <div class="mb-3">
+        <label class="form-label">Return Date</label>
+        <input asp-for="ReturnDate" type="date" class="form-control" value="@defaultReturn" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ConditionID" class="form-label">Condition on Return</label>
+        <select asp-for="ConditionID" class="form-select" required>
+            @foreach (var c in conditions)
+            {
+                <option value="@c.ConditionID" selected="@(c.ConditionID == Model.ConditionID)">@c.ConditionName</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Record Return</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

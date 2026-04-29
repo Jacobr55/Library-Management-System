@@ -12,6 +12,7 @@
             <th>Title</th>
             <th>Purchased</th>
             <th>Status</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +30,21 @@
                     else
                     {
                         <span class="badge bg-success">Active</span>
+                    }
+                </td>
+                <td>
+                    @if (copy.RetiredDate != null)
+                    {
+                        <form asp-action="Reactivate" asp-route-id="@copy.BookCopyID" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-success">Reactivate</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Retire" asp-route-id="@copy.BookCopyID" method="post" class="d-inline"
+                              onsubmit="return confirm('Retire this copy? It will be marked retired as of today.');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Retire</button>
+                        </form>
                     }
                 </td>
             </tr>

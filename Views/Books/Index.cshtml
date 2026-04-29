@@ -12,6 +12,7 @@
             <th>Author</th>
             <th>Genre</th>
             <th>ISBN</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@
                 <td>@book.AuthorName</td>
                 <td>@book.GenreName</td>
                 <td>@book.ISBN</td>
+                <td><a asp-action="Edit" asp-route-id="@book.BookTitleID" class="btn btn-sm btn-outline-primary">Edit</a></td>
             </tr>
         }
     </tbody>

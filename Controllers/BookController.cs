@@ -41,6 +41,103 @@ public class BooksController : Controller
             });
         }
 
-        return View(books); 
+        return View(books);
+    }
+
+    public IActionResult Edit(int id)
+    {
+        BookTitle? book = null;
+
+        using var conn = _db.GetConnection();
+        conn.Open();
+
+        string sql = @"
+            SELECT BookTitleID, BookTitleName, ISBN, AuthorID, GenreID
+            FROM   BookTitle
+            WHERE  BookTitleID = @id";
+
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@id", id);
+
+        using (var reader = cmd.ExecuteReader())
+        {
+            if (reader.Read())
+            {
+                book = new BookTitle
+                {
+                    BookTitleID = (int)reader["BookTitleID"],
+                    BookTitleName = reader["BookTitleName"].ToString()!,
+                    ISBN = reader["ISBN"].ToString()!,
+                    AuthorID = (int)reader["AuthorID"],
+                    GenreID = (int)reader["GenreID"]
+                };
+            }
+        }
+
+        if (book == null) return NotFound();
+
+        ViewBag.Authors = LoadAuthors(conn);
+        ViewBag.Genres = LoadGenres(conn);
+        return View(book);
+    }
+
+    [HttpPost]
+    public IActionResult Edit(BookTitle b)
+    {
+        using var conn = _db.GetConnection();
+        conn.Open();
+
+        string sql = @"
+            UPDATE BookTitle
+            SET    BookTitleName = @name,
+                   ISBN          = @isbn,
+                   AuthorID      = @authorId,
+                   GenreID       = @genreId
+            WHERE  BookTitleID   = @id";
+
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@name", b.BookTitleName);
+        cmd.Parameters.AddWithValue("@isbn", b.ISBN);
+        cmd.Parameters.AddWithValue("@authorId", b.AuthorID);
+        cmd.Parameters.AddWithValue("@genreId", b.GenreID);
+        cmd.Parameters.AddWithValue("@id", b.BookTitleID);
+        cmd.ExecuteNonQuery();
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    private static List<Author> LoadAuthors(SqlConnection conn)
+    {
+        var list = new List<Author>();
+        using var cmd = new SqlCommand(
+            "SELECT AuthorID, FirstName, LastName FROM Author ORDER BY LastName", conn);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            list.Add(new Author
+            {
+                AuthorID = (int)reader["AuthorID"],
+                FirstName = reader["FirstName"].ToString()!,
+                LastName = reader["LastName"].ToString()!
+            });
+        }
+        return list;
+    }
+
+    private static List<Genre> LoadGenres(SqlConnection conn)
+    {
+        var list = new List<Genre>();
+        using var cmd = new SqlCommand(
+            "SELECT GenreID, GenreName FROM Genre ORDER BY GenreName", conn);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+        {
+            list.Add(new Genre
+            {
+                GenreID = (int)reader["GenreID"],
+                GenreName = reader["GenreName"].ToString()!
+            });
+        }
+        return list;
     }
 }

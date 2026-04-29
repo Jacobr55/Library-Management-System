@@ -11,6 +11,7 @@
         <tr>
             <th>Name</th>
             <th>Email</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +20,7 @@
             <tr>
                 <td>@m.FullName</td>
                 <td>@m.Email</td>
+                <td><a asp-action="Edit" asp-route-id="@m.MemberID" class="btn btn-sm btn-outline-primary">Edit</a></td>
             </tr>
         }
     </tbody>

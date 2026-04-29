@@ -15,6 +15,7 @@
             <th>Due Date</th>
             <th>Returned</th>
             <th>Condition</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +28,12 @@
                 <td>@c.DueDate</td>
                 <td>@(c.ReturnDate?.ToString() ?? "— Not returned")</td>
                 <td>@c.ConditionName</td>
+                <td>
+                    @if (c.ReturnDate == null)
+                    {
+                        <a asp-action="Return" asp-route-id="@c.CheckoutID" class="btn btn-sm btn-outline-primary">Return</a>
+                    }
+                </td>
             </tr>
         }
     </tbody>

@@ -11,6 +11,7 @@
         <tr>
             <th>Name</th>
             <th>Bio</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -19,6 +20,7 @@
             <tr>
                 <td>@a.FullName</td>
                 <td>@(a.Bio?.Length > 80 ? a.Bio[..80] + "…" : a.Bio)</td>
+                <td><a asp-action="Edit" asp-route-id="@a.AuthorID" class="btn btn-sm btn-outline-primary">Edit</a></td>
             </tr>
         }
     </tbody>

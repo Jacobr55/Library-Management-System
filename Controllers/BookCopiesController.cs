@@ -51,5 +51,42 @@ namespace LibraryManagementSystem.Controllers
 
             return View(copies);
         }
+
+        [HttpPost]
+        public IActionResult Retire(int id)
+        {
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+            UPDATE BookCopy
+            SET    RetiredDate = @today
+            WHERE  BookCopyID  = @id";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@today", DateTime.Today);
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult Reactivate(int id)
+        {
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+            UPDATE BookCopy
+            SET    RetiredDate = NULL
+            WHERE  BookCopyID  = @id";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -1,0 +1,42 @@
+@model LibraryManagementSystem.Models.BookTitle
+@{
+    ViewData["Title"] = "Edit Book";
+    var authors = ViewBag.Authors as List<LibraryManagementSystem.Models.Author> ?? new();
+    var genres = ViewBag.Genres as List<LibraryManagementSystem.Models.Genre> ?? new();
+}
+
+<h2>Edit Book</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="BookTitleID" />
+
+    <div class="mb-3">
+        <label asp-for="BookTitleName" class="form-label">Title</label>
+        <input asp-for="BookTitleName" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="ISBN" class="form-label">ISBN</label>
+        <input asp-for="ISBN" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label asp-for="AuthorID" class="form-label">Author</label>
+        <select asp-for="AuthorID" class="form-select" required>
+            @foreach (var a in authors)
+            {
+                <option value="@a.AuthorID" selected="@(a.AuthorID == Model.AuthorID)">@a.FullName</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="GenreID" class="form-label">Genre</label>
+        <select asp-for="GenreID" class="form-select" required>
+            @foreach (var g in genres)
+            {
+                <option value="@g.GenreID" selected="@(g.GenreID == Model.GenreID)">@g.GenreName</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
