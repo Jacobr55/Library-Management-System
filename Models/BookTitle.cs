@@ -8,6 +8,8 @@
         public int AuthorID { get; set; }
         public int GenreID { get; set; }
         public string BookTitleName { get; set; } = string.Empty;
+        public int TotalCopies { get; set; }
+        public int TotalRetiredCopies { get; set; }
 
         // For joined display
         public string? AuthorName { get; set; }

@@ -1,0 +1,52 @@
+﻿@model List<LibraryManagementSystem.Models.BookTitle>
+@{
+    ViewData["Title"] = "Inventory Status";
+}
+
+<h2>Inventory Status</h2>
+<p class="text-muted">Total copies owned and retired for each book title.</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Book Title ID</th>
+            <th>Title</th>
+            <th>Total Copies</th>
+            <th>Active Copies</th>
+            <th>Retired Copies</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var b in Model)
+        {
+            int activeCopies = b.TotalCopies - b.TotalRetiredCopies;
+            <tr>
+                <td>@b.BookTitleID</td>
+                <td>@b.BookTitleName</td>
+                <td>@b.TotalCopies</td>
+                <td>
+                    @if (activeCopies == 0)
+                    {
+                        <span class="badge bg-danger">0 active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">@activeCopies active</span>
+                    }
+                </td>
+                <td>
+                    @if (b.TotalRetiredCopies > 0)
+                    {
+                        <span class="badge bg-secondary">@b.TotalRetiredCopies retired</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">—</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary mt-2">← Back to Books</a>

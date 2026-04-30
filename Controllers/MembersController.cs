@@ -93,5 +93,85 @@ namespace LibraryManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        public IActionResult TopBorrowers()
+        {
+            var topBorrowers = new List<Member>();
+
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+        SELECT TOP 10
+               m.MemberID,
+               m.FirstName + ' ' + m.LastName AS MemberName,
+               COUNT(c.CheckoutID) AS TotalBooksBorrowed
+        FROM   Members m
+        JOIN   Checkout c ON m.MemberID = c.MemberID
+        GROUP  BY m.MemberID, m.FirstName, m.LastName
+        ORDER  BY TotalBooksBorrowed DESC";
+
+            using var cmd = new SqlCommand(sql, conn);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                topBorrowers.Add(new Member
+                {
+                    MemberID = (int)reader["MemberID"],
+                    MemberName = reader["MemberName"].ToString()!,
+                    TotalBooksBorrowed = (int)reader["TotalBooksBorrowed"]
+                });
+            }
+
+            return View(topBorrowers);
+        }
+
+        public IActionResult InactiveMembers(int inactiveDays = 180)
+        {
+            var inactiveMembers = new List<Member>();
+
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+        SELECT m.MemberID,
+               m.Email,
+               MAX(c.CheckoutDate) AS LastCheckoutDate
+        FROM   Members m
+        LEFT JOIN Checkout c ON m.MemberID = c.MemberID
+        GROUP  BY m.MemberID, m.Email
+        HAVING MAX(c.CheckoutDate) < DATEADD(DAY, -@inactiveDays, GETDATE())
+            OR MAX(c.CheckoutDate) IS NULL
+        ORDER  BY LastCheckoutDate ASC";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@inactiveDays", inactiveDays);
+            using var reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                var member = new Member
+                {
+                    MemberID = (int)reader["MemberID"],
+                    Email = reader["Email"].ToString()!
+                };
+
+                if (reader["LastCheckoutDate"] == DBNull.Value)
+                {
+                    member.LastCheckoutDate = null;
+                }
+                else
+                {
+                    member.LastCheckoutDate = DateOnly.FromDateTime((DateTime)reader["LastCheckoutDate"]);
+                }
+
+                inactiveMembers.Add(member);
+            }
+
+            ViewBag.InactiveDays = inactiveDays;
+            return View(inactiveMembers);
+        }
     }
 }

@@ -1,0 +1,54 @@
+﻿@model List<LibraryManagementSystem.Models.Member>
+@{
+    ViewData["Title"] = "Top Borrowers";
+}
+
+<h2>Top 10 Borrowers</h2>
+<p class="text-muted">Members who have checked out the most books of all time.</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Member ID</th>
+            <th>Name</th>
+            <th>Total Books Borrowed</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int rank = 1;
+        }
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>
+                    @if (rank == 1)
+                    {
+                        <span class="badge bg-warning text-dark">🥇 1st</span>
+                    }
+                    else if (rank == 2)
+                    {
+                        <span class="badge bg-secondary">🥈 2nd</span>
+                    }
+                    else if (rank == 3)
+                    {
+                        <span class="badge bg-danger">🥉 3rd</span>
+                    }
+                    else
+                    {
+                        @rank
+                    }
+                </td>
+                <td>@m.MemberID</td>
+                <td>@m.MemberName</td>
+                <td>
+                    <span class="badge bg-primary">@m.TotalBooksBorrowed books</span>
+                </td>
+            </tr>
+            rank++;
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary mt-2">← Back to Members</a>

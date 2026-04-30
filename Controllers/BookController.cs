@@ -140,4 +140,39 @@ public class BooksController : Controller
         }
         return list;
     }
+
+    public IActionResult InventoryStatus()
+    {
+        var inventory = new List<BookTitle>();
+
+        using var conn = _db.GetConnection();
+        conn.Open();
+
+        string sql = @"
+        SELECT bt.BookTitleID,
+               bt.BookTitleName,
+               COUNT(bc.BookCopyID)                              AS TotalCopies,
+               SUM(CASE WHEN bc.RetiredDate IS NOT NULL THEN 1
+                        ELSE 0 END)                             AS TotalRetiredCopies
+        FROM   BookTitle bt
+        LEFT JOIN BookCopy bc ON bt.BookTitleID = bc.BookTitleID
+        GROUP  BY bt.BookTitleID, bt.BookTitleName
+        ORDER  BY bt.BookTitleName";
+
+        using var cmd = new SqlCommand(sql, conn);
+        using var reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            inventory.Add(new BookTitle
+            {
+                BookTitleID = (int)reader["BookTitleID"],
+                BookTitleName = reader["BookTitleName"].ToString()!,
+                TotalCopies = (int)reader["TotalCopies"],
+                TotalRetiredCopies = (int)reader["TotalRetiredCopies"]
+            });
+        }
+
+        return View(inventory);
+    }
 }
