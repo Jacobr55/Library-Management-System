@@ -8,7 +8,7 @@ namespace LibraryManagementSystem.Services
         private readonly PasswordHasher<string> _hasher = new();
 
         public string Hash(string password)
-        {
+        { 
             return _hasher.HashPassword("", password);
         }
 

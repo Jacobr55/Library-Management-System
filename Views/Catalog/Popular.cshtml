@@ -1,0 +1,63 @@
+﻿@model List<LibraryManagementSystem.Models.PopularBookViewModel>
+@{
+    ViewData["Title"] = "Popular This Month";
+    var monthName = DateTime.Today.ToString("MMMM yyyy");
+}
+
+<h2>Popular This Month</h2>
+<p class="text-muted">Top 10 most-checked-out books for @monthName</p>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">No books have been checked out yet this month. Check back soon!</p>
+    <a asp-action="Browse" class="btn btn-primary">Browse All Books</a>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="width: 60px;">Rank</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Genre</th>
+                <th>Checkouts This Month</th>
+                <th>Available</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td><strong>#@book.Rank</strong></td>
+                    <td>@book.BookTitleName</td>
+                    <td>@book.AuthorName</td>
+                    <td>@book.GenreName</td>
+                    <td>@book.CheckoutCount</td>
+                    <td>@book.AvailableCopies</td>
+                    <td>
+                        @if (book.AvailableCopies == 0)
+                        {
+                            <button class="btn btn-secondary btn-sm" disabled>Unavailable</button>
+                        }
+                        else if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <form asp-action="Checkout" method="post" style="display:inline;">
+                                <input type="hidden" name="bookTitleId" value="@book.BookTitleID" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary btn-sm">Checkout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary btn-sm">Sign up to checkout</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Browse" class="btn btn-outline-primary">Back to The Book Catalog</a>
+}

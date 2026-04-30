@@ -67,7 +67,8 @@ CREATE TABLE Members (
     MemberID    INT             IDENTITY(1,1) PRIMARY KEY,
     Email       NVARCHAR(256)   NOT NULL UNIQUE,
     FirstName   NVARCHAR(100)   NOT NULL,
-    LastName    NVARCHAR(100)   NOT NULL
+    LastName    NVARCHAR(100)   NOT NULL,
+    PasswordHash    NVARCHAR(500)   NULL
 );
 
 -- Checkout

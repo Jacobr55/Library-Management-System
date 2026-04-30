@@ -1,8 +1,21 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p> Please register as a Member!</p>
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to the CIS-560 Library</h1>
+    <p class="lead">Browse our collection of books and check them out today. Or, if you are a librarian, take a look at our database tables and values</p>
+
+    <div class="mt-4">
+        <a asp-controller="Catalog" asp-action="Browse" class="btn btn-primary btn-lg">Browse Books</a>
+
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+        {
+            <a asp-controller="Catalog" asp-action="MyCheckouts" class="btn btn-outline-primary btn-lg ms-2">My Checkouts</a>
+        }
+        else
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-primary btn-lg ms-2">Sign Up</a>
+        }
+    </div>
 </div>

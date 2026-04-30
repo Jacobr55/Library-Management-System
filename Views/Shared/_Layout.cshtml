@@ -41,26 +41,32 @@
                             <a class="nav-link" asp-controller="BookCopies" asp-action="Index">Book Copies</a>
                         </li>                           
                     </ul>
-
+                    <!-- Auth View -->
                     <ul class="navbar-nav">
+
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <span class="nav-link text-dark">Hello, @User.Identity.Name!</span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Catalog" asp-action="MyCheckouts">My Checkouts</a>
+                        </li>
+                        <li class="nav-item">
+                            <span class="nav-link text-dark">Hello, @User.Identity.Name!</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
+                        </li>
                         }
                         else
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
                         }
+
+
                     </ul>
 
                 </div>
@@ -69,6 +75,22 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Success"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["Error"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
             @RenderBody()
         </main>
     </div>

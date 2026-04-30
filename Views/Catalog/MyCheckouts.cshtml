@@ -1,0 +1,65 @@
+﻿@model List<LibraryManagementSystem.Models.MyCheckoutViewModel>
+@{
+    ViewData["Title"] = "My Checkouts";
+}
+
+<h2>My Checkouts</h2>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">You don't have any books checked out.</p>
+    <a asp-action="Browse" class="btn btn-primary">Browse Books</a>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Checked Out</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.BookTitleName</td>
+                    <td>@item.AuthorName</td>
+                    <td>@item.ISBN</td>
+                    <td>@item.CheckoutDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.DueDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        @if (item.Status == "Lost")
+                        {
+                            <span class="badge bg-secondary">Lost</span>
+                        }
+                        else if (item.Status == "Overdue")
+                        {
+                            var daysOverdue = (DateTime.Today - item.DueDate).Days;
+                            <span class="badge bg-danger">Overdue by @daysOverdue day@(daysOverdue == 1 ? "" : "s")</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Status == "Lost")
+                        {
+                            <button class="btn btn-secondary btn-sm" disabled title="Contact a librarian">Cannot Return</button>
+                        }
+                        else
+                        {
+                            <a asp-action="Return" asp-route-checkoutId="@item.CheckoutID" class="btn btn-primary btn-sm">Return</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
