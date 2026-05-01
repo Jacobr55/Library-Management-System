@@ -1,0 +1,27 @@
+@model LibraryManagementSystem.Models.BookCopy
+@{
+    ViewData["Title"] = "Add Book Copy";
+    var titles = ViewBag.BookTitles as List<LibraryManagementSystem.Models.BookTitle> ?? new();
+}
+
+<h2>Add Book Copy</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="BookTitleID" class="form-label">Book Title</label>
+        <select asp-for="BookTitleID" class="form-select" required>
+            <option value="">-- Select a book title --</option>
+            @foreach (var t in titles)
+            {
+                <option value="@t.BookTitleID">@t.BookTitleName</option>
+            }
+        </select>
+    </div>
+    <div class="mb-3">
+        <label asp-for="PurchasedDate" class="form-label">Purchased Date</label>
+        <input asp-for="PurchasedDate" type="date" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

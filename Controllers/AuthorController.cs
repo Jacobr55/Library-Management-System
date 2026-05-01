@@ -93,5 +93,29 @@ namespace LibraryManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Author a)
+        {
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+            INSERT INTO Author (FirstName, LastName, Bio)
+            VALUES (@first, @last, @bio)";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@first", a.FirstName);
+            cmd.Parameters.AddWithValue("@last", a.LastName);
+            cmd.Parameters.AddWithValue("@bio", (object?)a.Bio ?? DBNull.Value);
+            cmd.ExecuteNonQuery();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

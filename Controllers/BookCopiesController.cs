@@ -88,5 +88,48 @@ namespace LibraryManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Create()
+        {
+            using var conn = _db.GetConnection();
+            conn.Open();
+            ViewBag.BookTitles = LoadBookTitles(conn);
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(BookCopy c)
+        {
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+            INSERT INTO BookCopy (BookTitleID, PurchasedDate)
+            VALUES (@titleId, @purchased)";
+
+            using var cmd = new SqlCommand(sql, conn);
+            cmd.Parameters.AddWithValue("@titleId", c.BookTitleID);
+            cmd.Parameters.AddWithValue("@purchased", c.PurchasedDate.ToDateTime(TimeOnly.MinValue));
+            cmd.ExecuteNonQuery();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        private static List<BookTitle> LoadBookTitles(SqlConnection conn)
+        {
+            var list = new List<BookTitle>();
+            using var cmd = new SqlCommand(
+                "SELECT BookTitleID, BookTitleName FROM BookTitle ORDER BY BookTitleName", conn);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(new BookTitle
+                {
+                    BookTitleID = (int)reader["BookTitleID"],
+                    BookTitleName = reader["BookTitleName"].ToString()!
+                });
+            }
+            return list;
+        }
     }
 }

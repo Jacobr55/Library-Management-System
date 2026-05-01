@@ -106,6 +106,35 @@ public class BooksController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    public IActionResult Create()
+    {
+        using var conn = _db.GetConnection();
+        conn.Open();
+        ViewBag.Authors = LoadAuthors(conn);
+        ViewBag.Genres = LoadGenres(conn);
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Create(BookTitle b)
+    {
+        using var conn = _db.GetConnection();
+        conn.Open();
+
+        string sql = @"
+            INSERT INTO BookTitle (BookTitleName, ISBN, AuthorID, GenreID)
+            VALUES (@name, @isbn, @authorId, @genreId)";
+
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@name", b.BookTitleName);
+        cmd.Parameters.AddWithValue("@isbn", b.ISBN);
+        cmd.Parameters.AddWithValue("@authorId", b.AuthorID);
+        cmd.Parameters.AddWithValue("@genreId", b.GenreID);
+        cmd.ExecuteNonQuery();
+
+        return RedirectToAction(nameof(Index));
+    }
+
     private static List<Author> LoadAuthors(SqlConnection conn)
     {
         var list = new List<Author>();
