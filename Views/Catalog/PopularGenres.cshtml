@@ -1,0 +1,30 @@
+﻿@model List<LibraryManagementSystem.Models.PopularGenreViewModel>
+@{
+    ViewData["Title"] = "Popular Genres";
+    var monthName = DateTime.Today.ToString("MMMM yyyy");
+}
+
+<h2>Popular Genres This Month</h2>
+<p class="text-muted">Genres ranked by total checkouts for @monthName</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th style="width: 60px;">Rank</th>
+            <th>Genre</th>
+            <th>Checkouts This Month</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><strong>#@item.Rank</strong></td>
+                <td>@item.GenreName</td>
+                <td>@item.CheckoutCount</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Browse" class="btn btn-outline-primary">Back to The Book Catalog</a>

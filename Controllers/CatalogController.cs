@@ -428,5 +428,43 @@ namespace LibraryManagementSystem.Controllers
 
 
 
+        [HttpGet]
+        public IActionResult PopularGenres()
+        {
+            var genres = new List<PopularGenreViewModel>();
+
+            using var conn = _db.GetConnection();
+            conn.Open();
+
+            string sql = @"
+        SELECT
+            g.GenreName,
+            COUNT(c.CheckoutID) AS CheckoutCount
+        FROM Genre g
+        LEFT JOIN BookTitle bt ON bt.GenreID = g.GenreID
+        LEFT JOIN BookCopy  bc ON bc.BookTitleID = bt.BookTitleID
+        LEFT JOIN Checkout  c  ON c.BookCopyID = bc.BookCopyID
+                              AND MONTH(c.CheckoutDate) = MONTH(GETDATE())
+                              AND YEAR(c.CheckoutDate)  = YEAR(GETDATE())
+        GROUP BY g.GenreName
+        ORDER BY CheckoutCount DESC, g.GenreName";
+
+            using var cmd = new SqlCommand(sql, conn);
+            using var reader = cmd.ExecuteReader();
+
+            int rank = 1;
+            while (reader.Read())
+            {
+                genres.Add(new PopularGenreViewModel
+                {
+                    Rank = rank++,
+                    GenreName = reader["GenreName"].ToString()!,
+                    CheckoutCount = (int)reader["CheckoutCount"]
+                });
+            }
+
+            return View(genres);
+        }
+
     }
 }

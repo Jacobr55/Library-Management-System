@@ -1,7 +1,8 @@
--- =============================================
+-- 
 -- Library Management System
 -- Database Creation Script
--- =============================================
+-- 
+
 
 -- Create the database
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'LibrarySystemDb')
@@ -13,9 +14,9 @@ GO
 USE LibrarySystemDb;
 GO
 
--- =============
+-- 
 -- Create Tables
--- =============
+--
 
 -- Genre
 CREATE TABLE Genre (
